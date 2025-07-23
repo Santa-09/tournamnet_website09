@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algo Arena - Premium Esports Tournaments</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f0f13;
+            --secondary: #1a1a24;
+            --accent-yellow: #ffcc00;
+            --accent-red: #ff4655;
+            --text: #ffffff;
+            --text-secondary: #b8b8b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(255, 204, 0, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(255, 70, 85, 0.05) 0%, transparent 20%),
+                url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="white" opacity="0.5"/></svg>') repeat;
+            background-size: 100px 100px;
+            z-index: -1;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .slide-left.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .slide-right.animate {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .scale-in.animate {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .stagger-fade {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .stagger-fade.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stagger-1 {
+            transition-delay: 0.1s;
+        }
+
+        .stagger-2 {
+            transition-delay: 0.2s;
+        }
+
+        .stagger-3 {
+            transition-delay: 0.3s;
+        }
+
+        .stagger-4 {
+            transition-delay: 0.4s;
+        }
+
+        nav {
+            background-color: rgba(15, 15, 19, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            background: linear-gradient(to right, #ffcc00, #ff4655);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-yellow);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-yellow);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            width: 30px;
+            height: 24px;
+            position: relative;
+            z-index: 1001;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: var(--text);
+            border-radius: 3px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: .25s ease-in-out;
+            transform-origin: left center;
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg);
+            top: -3px;
+            left: 8px;
+        }
+
+        .hamburger.open span:nth-child(2) {
+            width: 0%;
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 24px;
+            left: 8px;
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background-color: var(--secondary);
+            z-index: 999;
+            padding: 80px 30px 30px;
+            transition: right 0.3s ease;
+            border-left: 2px solid var(--accent-yellow);
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+            overflow-y: auto;
+        }
+
+        .mobile-menu.open {
+            right: 0;
+        }
+
+        .mobile-menu .nav-links {
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .mobile-menu .nav-links a {
+            font-size: 1.2rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu .nav-links a:hover {
+            color: var(--accent-yellow);
+            padding-left: 10px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .hero {
+            padding: 5rem 5%;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(15, 15, 19, 0.9), rgba(15, 15, 19, 0.7)), url('https://via.placeholder.com/1920x1080');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .hero h2 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #ffffff, #b8b8b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: heroTitle 1.2s ease-out;
+        }
+
+        @keyframes heroTitle {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            animation: heroText 1.2s ease-out 0.3s both;
+        }
+
+        @keyframes heroText {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero .cta-button {
+            animation: heroButton 1.2s ease-out 0.6s both;
+        }
+
+        @keyframes heroButton {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .about {
+            padding: 4rem 5%;
+            background-color: var(--secondary);
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-yellow);
+        }
+
+        .about-text p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent-yellow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 204, 0, 0.1);
+        }
+
+        .feature-card h4 {
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .games {
+            padding: 4rem 5%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .game-cards {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .game-card {
+            width: 500px;
+            height: 300px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-card-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .game-card:hover .game-card-bg {
+            transform: scale(1.1);
+        }
+
+        .free-fire {
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url('https://via.placeholder.com/800x600');
+            border: 2px solid var(--accent-yellow);
+        }
+
+        .valorant {
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3)), url('https://via.placeholder.com/800x600');
+            border: 2px solid var(--accent-red);
+        }
+
+        .game-card-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+        }
+
+        .game-card h4 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .free-fire h4 {
+            color: var(--accent-yellow);
+        }
+
+        .valorant h4 {
+            color: var(--accent-red);
+        }
+
+        .game-card p {
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .game-button {
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            width: fit-content;
+            transition: transform 0.3s;
+        }
+
+        .free-fire .game-button {
+            background-color: var(--accent-yellow);
+            color: var(--primary);
+        }
+
+        .valorant .game-button {
+            background-color: var(--accent-red);
+            color: white;
+        }
+
+        .game-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .rules {
+            padding: 4rem 5%;
+            background-color: var(--secondary);
+        }
+
+        .rules-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .rules-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .rule-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-top: 3px solid var(--accent-yellow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .rule-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 204, 0, 0.1);
+        }
+
+        .rule-card h4 {
+            margin-bottom: 1rem;
+            color: var(--accent-yellow);
+        }
+
+        .rule-card ul {
+            list-style-position: inside;
+            color: var(--text-secondary);
+        }
+
+        .rule-card li {
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .rule-card:hover li {
+            color: var(--text);
+        }
+
+        .policy-section {
+            padding: 4rem 5%;
+            background-color: var(--secondary);
+            display: none;
+        }
+
+        .policy-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .section-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .policy-section .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .policy-section h3 {
+            color: var(--accent-yellow);
+            font-size: 2rem;
+        }
+
+        .back-to-top {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .back-to-top:hover {
+            color: var(--accent-yellow);
+        }
+
+        .policy-content {
+            line-height: 1.6;
+        }
+
+        .policy-content h4 {
+            color: var(--accent-yellow);
+            margin: 1.5rem 0 1rem;
+            font-size: 1.3rem;
+        }
+
+        .policy-content p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .policy-content ul {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .policy-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .policy-content strong {
+            color: var(--text);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        footer {
+            padding: 3rem 5%;
+            background-color: #0a0a0f;
+            text-align: center;
+        }
+
+        .footer-logo h3 {
+            font-size: 1.5rem;
+            background: linear-gradient(to right, #ffcc00, #ff4655);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-yellow);
+        }
+
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .official-updates-button {
+            background: linear-gradient(45deg, var(--accent-yellow), #ff9900);
+            color: var(--primary);
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 1rem;
+        }
+
+        .official-updates-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.3);
+        }
+
+        .hover {
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .about-features {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header h3 {
+                font-size: 2rem;
+            }
+
+            .game-card {
+                width: 100%;
+                max-width: 400px;
+                height: 250px;
+            }
+
+            .game-card h4 {
+                font-size: 1.5rem;
+            }
+
+            .rules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-links {
+                gap: 1rem;
+            }
+
+            .logo h1 {
+                font-size: 1.4rem;
+            }
+
+            nav {
+                padding: 1rem 3%;
+            }
+
+            .policy-section h3 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 3rem 3%;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .about,
+            .games,
+            .rules,
+            .policy-section {
+                padding: 3rem 3%;
+            }
+
+            .mobile-menu {
+                width: 85%;
+            }
+
+            .game-card {
+                height: 200px;
+            }
+
+            .game-card-content {
+                padding: 1.5rem;
+            }
+
+            .policy-section h3 {
+                font-size: 1.5rem;
+            }
+
+            .policy-content h4 {
+                font-size: 1.2rem;
+            }
+
+            .nav-links {
+                display: block;
+            }
+
+            .desktop-view {
+                display: none;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo h1 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                max-width: calc(100% - 60px);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-menu {
+                display: none !important;
+            }
+
+            .hamburger {
+                display: none !important;
+            }
+
+            .overlay {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <a href="#home" class="hover">
+                <h1>ALGO ARENA X SOLARIS</h1>
+            </a>
+        </div>
+        <div class="nav-links desktop-view">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#games">Games</a>
+            <a href="#rules">Rules</a>
+        </div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <div class="mobile-menu">
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#games">Games</a>
+            <a href="#rules">Rules</a>
+            <a href="contact.html">Contact</a>
+            <a href="#privacy" class="privacy-mobile">Privacy Policy</a>
+            <a href="#terms" class="terms-mobile">Terms of Service</a>
+        </div>
+    </div>
+    <div class="overlay"></div>
+
+    <section class="hero" id="home">
+        <h2>Compete. Win. Dominate.</h2>
+        <p>Join the most thrilling esports tournaments with massive prize pools and professional organization. Whether
+            you're a casual player or aspiring pro, Algo Arena is your battlefield.</p>
+    </section>
+
+    <section class="about" id="about">
+        <div class="about-container">
+            <div class="about-text slide-left">
+                <h3>About Algo Arena</h3>
+                <p>Algo Arena is a premier esports tournament platform dedicated to providing competitive gamers with
+                    professionally organized tournaments, fair play environments, and substantial rewards.</p>
+                <p>We host regular competitions for popular games like Free Fire and Valorant, with tournaments ranging
+                    from amateur to semi-professional levels. Our platform is built by gamers, for gamers.</p>
+            </div>
+            <div class="about-features slide-right">
+                <div class="feature-card stagger-fade stagger-1">
+                    <h4>Professional Organization</h4>
+                    <p>Our tournaments follow strict competitive rules with experienced admins ensuring fair play.</p>
+                </div>
+                <div class="feature-card stagger-fade stagger-2">
+                    <h4>Substantial Prizes</h4>
+                    <p>Compete for cash prizes, gaming gear, and in-game items worth thousands of dollars.</p>
+                </div>
+                <div class="feature-card stagger-fade stagger-3">
+                    <h4>Community Focus</h4>
+                    <p>Join a growing community of competitive gamers and make connections that last.</p>
+                </div>
+                <div class="feature-card stagger-fade stagger-4">
+                    <h4>Regular Events</h4>
+                    <p>Weekly and monthly tournaments to keep the competition fresh and exciting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="games" id="games">
+        <div class="section-header fade-in">
+            <h3>Featured Games</h3>
+            <p>Choose your battlefield and compete against the best players in these thrilling esports titles</p>
+        </div>
+        <div class="game-cards">
+            <div class="game-card free-fire scale-in">
+                <div class="game-card-bg"></div>
+                <div class="game-card-content">
+                    <h4>Free Fire</h4>
+                    <p>Battle royale action at its finest. Compete in squad tournaments with massive prize pools.</p>
+                    <a href="free-fire.html" class="game-button">Click Here for Registration</a>
+                </div>
+            </div>
+            <div class="game-card valorant scale-in">
+                <div class="game-card-bg"></div>
+                <div class="game-card-content">
+                    <h4>Valorant</h4>
+                    <p>Tactical 5v5 shooter competition. Test your skills in our ranked tournament series.</p>
+                    <a href="valo.html" class="game-button">Click Here for Registration</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="rules" id="rules">
+        <div class="rules-container">
+            <div class="section-header fade-in">
+                <h3>Tournament Rules</h3>
+                <p>To ensure fair and competitive gameplay, all participants must adhere to these rules and restrictions
+                </p>
+            </div>
+            <div class="rules-grid">
+                <div class="rule-card stagger-fade stagger-1">
+                    <h4>General Rules</h4>
+                    <ul>
+                        <li>All players must be registered with valid game IDs</li>
+                        <li>No account sharing or smurfing allowed</li>
+                        <li>Teams must report 15 minutes before match time</li>
+                        <li>Decisions by tournament admins are final</li>
+                    </ul>
+                </div>
+                <div class="rule-card stagger-fade stagger-2">
+                    <h4>Free Fire Specific</h4>
+                    <ul>
+                        <li>Squad format (4 players per team)</li>
+                        <li>Custom room matches</li>
+                        <li>No use of prohibited emulators</li>
+                        <li>Points system based on kills and placement</li>
+                    </ul>
+                </div>
+                <div class="rule-card stagger-fade stagger-3">
+                    <h4>Valorant Specific</h4>
+                    <ul>
+                        <li>5v5 competitive format</li>
+                        <li>Best-of-three matches (Finals: best-of-five)</li>
+                        <li>Map veto system in place</li>
+                        <li>No exploit or bug abuse allowed</li>
+                    </ul>
+                </div>
+                <div class="rule-card stagger-fade stagger-4">
+                    <h4>Code of Conduct</h4>
+                    <ul>
+                        <li>No toxic behavior or harassment</li>
+                        <li>No cheating or third-party software</li>
+                        <li>Respect all players and staff</li>
+                        <li>Violations result in permanent bans</li>
+                    </ul>
+                </div>
+            </div>
+            <a href="https://join-our-community-rtof.vercel.app/" class="official-updates-button" target="_blank">Click
+                here for official updates</a>
+        </div>
+    </section>
+
+    <section class="policy-section" id="privacy">
+        <div class="section-container">
+            <div class="section-header">
+                <h3>Privacy Policy</h3>
+                <a href="#home" class="back-to-top">Back to Top</a>
+            </div>
+            <div class="policy-content">
+                <p>At Algo Arena, we value your privacy and are committed to protecting your personal information. This
+                    Privacy Policy explains what information we collect and how we use it.</p>
+
+                <h4>1. Information We Collect</h4>
+                <ul>
+                    <li>Name, email address, and game IDs (e.g., Free Fire UID or Valorant ID) when you register for a
+                        tournament</li>
+                    <li>Any messages or feedback you provide through our contact form</li>
+                </ul>
+
+                <h4>2. How We Use Your Information</h4>
+                <ul>
+                    <li>To register you for tournaments and organize matches</li>
+                    <li>To send important updates regarding tournaments (via email or messaging platforms)</li>
+                    <li>To improve our website and tournament experience</li>
+                </ul>
+
+                <h4>3. Sharing Your Information</h4>
+                <p>We do <strong>not</strong> sell, rent, or share your personal data with third parties. Information is
+                    only used internally by Algo Arena team members for tournament purposes.</p>
+
+                <h4>4. Data Security</h4>
+                <p>We take reasonable precautions to protect your information. However, no method of transmission over
+                    the Internet is 100% secure.</p>
+
+                <h4>5. Your Consent</h4>
+                <p>By using our site and registering for tournaments, you consent to our Privacy Policy.</p>
+
+                <h4>6. Changes to This Policy</h4>
+                <p>We may update this policy occasionally. Any changes will be posted on this page.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="policy-section" id="terms">
+        <div class="section-container">
+            <div class="section-header">
+                <h3>Terms and Conditions</h3>
+                <a href="#home" class="back-to-top">Back to Top</a>
+            </div>
+            <div class="policy-content">
+                <p>Welcome to Algo Arena! By registering and participating in our tournaments, you agree to the
+                    following terms and conditions.</p>
+
+                <h4>1. Eligibility</h4>
+                <p>All participants must register with accurate game IDs. Fake entries, smurf accounts, or account
+                    sharing is strictly prohibited.</p>
+
+                <h4>2. Code of Conduct</h4>
+                <ul>
+                    <li>Respect other players and organizers</li>
+                    <li>No cheating, abusive behavior, or use of unauthorized software</li>
+                    <li>Violation may lead to disqualification or permanent bans</li>
+                </ul>
+
+                <h4>3. Match Rules</h4>
+                <p>Match timings, formats (e.g., 5v5, custom rooms), and scoring will be explained in each tournament's
+                    description. Teams must report on time. Decisions by admins are final.</p>
+
+                <h4>4. Prizes</h4>
+                <p>Prizes (if applicable) will be awarded as per tournament guidelines. If you win, you may be required
+                    to provide valid identification or game proof for verification.</p>
+
+                <h4>5. Changes and Cancellation</h4>
+                <p>Algo Arena reserves the right to cancel or reschedule any tournament due to technical issues or
+                    unfair play. All updates will be notified in advance.</p>
+
+                <h4>6. Limitation of Liability</h4>
+                <p>Algo Arena is not responsible for any network issues, in-game problems, or losses incurred during
+                    gameplay.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer id="contact" class="fade-in">
+        <div class="footer-logo">
+            <h3>ALGO ARENA</h3>
+        </div>
+        <div class="footer-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#games">Games</a>
+            <a href="#rules">Rules</a>
+            <a href="#privacy" id="privacyLink">Privacy Policy</a>
+            <a href="#terms" id="termsLink">Terms of Service</a>
+        </div>
+        <p class="copyright">© 2025 Algo Arena. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        // Observe all animated elements
+        document.querySelectorAll('.fade-in, .slide-left, .slide-right, .scale-in, .stagger-fade').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Mobile menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const overlay = document.querySelector('.overlay');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : 'auto';
+        });
+
+        overlay.addEventListener('click', () => {
+            hamburger.classList.remove('open');
+            mobileMenu.classList.remove('open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('.mobile-menu .nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('open');
+                mobileMenu.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+        });
+
+        // Policy section toggle functionality
+        document.getElementById('privacyLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.policy-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('privacy').classList.add('active');
+            window.scrollTo({
+                top: document.getElementById('privacy').offsetTop - 80,
+                behavior: 'smooth'
+            });
+        });
+
+        document.getElementById('termsLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.policy-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('terms').classList.add('active');
+            window.scrollTo({
+                top: document.getElementById('terms').offsetTop - 80,
+                behavior: 'smooth'
+            });
+        });
+
+        // Back to top functionality for policy sections
+        document.querySelectorAll('.back-to-top').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Mobile policy links
+        document.querySelector('.privacy-mobile')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            hamburger.classList.remove('open');
+            mobileMenu.classList.remove('open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            document.querySelectorAll('.policy-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('privacy').classList.add('active');
+            window.scrollTo({
+                top: document.getElementById('privacy').offsetTop - 80,
+                behavior: 'smooth'
+            });
+        });
+
+        document.querySelector('.terms-mobile')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            hamburger.classList.remove('open');
+            mobileMenu.classList.remove('open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            document.querySelectorAll('.policy-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('terms').classList.add('active');
+            window.scrollTo({
+                top: document.getElementById('terms').offsetTop - 80,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+</body>
+
+</html>
